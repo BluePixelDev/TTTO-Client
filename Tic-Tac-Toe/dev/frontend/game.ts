@@ -1,6 +1,7 @@
 const gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement;
-const gridSize = 10 as number;
+const gridSize = 20 as number;
 const gridSpacing = 2 as number;
+const countInLineToWin = 5 as number;
 
 let cells = [] as Cell[][];
 
@@ -53,12 +54,87 @@ function onCellClick(event: MouseEvent) {
     const xIndex = Math.floor(x / cellSize);
     const yIndex = Math.floor(y / cellSize);
 
-    if(cells[xIndex][yIndex].state == CellState.Empty){
+    if (cells[xIndex][yIndex].state == CellState.Empty) {
         cells[xIndex][yIndex].state = CellState.Cross;
     }
-    else{
-        cells[xIndex][yIndex].state = CellState.Empty;
+    else {
+        if (cells[xIndex][yIndex].state == CellState.Circle) {
+            cells[xIndex][yIndex].state = CellState.Empty;
+        }
+        if (cells[xIndex][yIndex].state == CellState.Cross) {
+            cells[xIndex][yIndex].state = CellState.Circle;
+        }      
     }
+    checkForWin();
+}
+
+function checkForWin(){
+    for(let x = 0; x < gridSize; x++){
+        for(let y = 0; y < gridSize; y++){
+            const cell = cells[x][y];
+            let check = checkCellsNeighbours(cell);
+
+            if(check){
+                console.log("Someone scored! " + cell.state);
+            }
+        }
+    }
+}
+function checkCellsNeighbours(cell: Cell) : Boolean{
+
+    if(cell.state == CellState.Empty){
+        return false
+    }
+
+    let up = checkCellsInDirection(0, 1, cell)
+    let upLeft = checkCellsInDirection(-1, 1, cell)
+    let upRight = checkCellsInDirection(1, 1, cell)
+    let upCheck = up || upLeft || upRight;
+
+
+    let left = checkCellsInDirection(-1, 0, cell)
+    let right = checkCellsInDirection(-1, 0, cell)
+    let sidewaysCheck = left || right;
+
+    let down = checkCellsInDirection(0, -1, cell)
+    let downLeft = checkCellsInDirection(-1, -1, cell)
+    let downRight = checkCellsInDirection(1, -1, cell)
+    let downCheck = down || downLeft || downRight;
+
+    return upCheck || sidewaysCheck || downCheck;
+}
+function checkCellsInDirection(dirX: number, dirY: number, cell: Cell) : Boolean{
+    let countInLine = 0;
+    for(let i = 0; i < countInLineToWin; i++){
+        let posX = cell.index.x + dirX * i;
+        let posY = cell.index.y + dirY * i;
+
+        if(posX  >= gridSize){
+            break;
+        }
+        if(posX  < 0){
+            break;
+        }
+
+        if(posY >= gridSize){
+            break;
+        }
+        if(posY  < 0){
+            break;
+        }
+
+        let nextCell = cells[posX][posY];
+        if(nextCell.state != CellState.Empty){
+            if(nextCell.state == cell.state){
+                countInLine++;
+
+                continue;
+            }
+        }
+
+        countInLine = 0;
+    }
+    return countInLine >= countInLineToWin
 }
 
 //==== MAIN LOOP ====
@@ -104,7 +180,7 @@ function drawCells(ctx: CanvasRenderingContext2D) {
         }
     }
 }
-function drawBackground(ctx: CanvasRenderingContext2D){
+function drawBackground(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
 }
@@ -118,6 +194,7 @@ function drawCell(ctx: CanvasRenderingContext2D, cell: Cell, cellWidth: number, 
             drawCross(ctx, posX, posY, cellWidth, cellHeight);
             break;
         case CellState.Circle:
+            drawCircle(ctx, posX, posY, cellWidth, cellHeight)
             break;
         case CellState.Empty:
             drawEmptyCell(ctx, posX, posY, cellWidth, cellHeight);
@@ -125,10 +202,14 @@ function drawCell(ctx: CanvasRenderingContext2D, cell: Cell, cellWidth: number, 
     }
 }
 function drawCross(ctx: CanvasRenderingContext2D, x: number, y: number, cellWidth: number, cellHeight: number) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x + cellWidth / 2 - 5, y + cellHeight / 2 - 5, 10, 10);
+    ctx.fillStyle = "red";
+    ctx.fillRect(x, y, cellWidth, cellHeight);
 }
-function drawEmptyCell(ctx: CanvasRenderingContext2D, x: number, y: number, cellWidth: number, cellHeight: number){
+function drawCircle(ctx: CanvasRenderingContext2D, x: number, y: number, cellWidth: number, cellHeight: number) {
+    ctx.fillStyle = "green";
+    ctx.fillRect(x, y, cellWidth, cellHeight);
+}
+function drawEmptyCell(ctx: CanvasRenderingContext2D, x: number, y: number, cellWidth: number, cellHeight: number) {
     ctx.fillStyle = "white";
     ctx.fillRect(x, y, cellHeight, cellWidth);
 }

@@ -40,7 +40,7 @@ var express = require("express");
 var path = require("path");
 var app = express();
 var port = 3000;
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use(express.static(path.join(__dirname, '..', 'frontend'), { index: false, extensions: ['html'] }));
 app.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         res.sendFile(path.join(__dirname, '..', 'frontend', 'game.html'));

@@ -1,6 +1,7 @@
 var gameCanvas = document.getElementById("game-canvas");
-var gridSize = 10;
+var gridSize = 20;
 var gridSpacing = 2;
+var countInLineToWin = 5;
 var cells = [];
 //==== CLASSES ====
 var Vector2 = /** @class */ (function () {
@@ -46,8 +47,70 @@ function onCellClick(event) {
         cells[xIndex][yIndex].state = CellState.Cross;
     }
     else {
-        cells[xIndex][yIndex].state = CellState.Empty;
+        if (cells[xIndex][yIndex].state == CellState.Circle) {
+            cells[xIndex][yIndex].state = CellState.Empty;
+        }
+        if (cells[xIndex][yIndex].state == CellState.Cross) {
+            cells[xIndex][yIndex].state = CellState.Circle;
+        }
     }
+    checkForWin();
+}
+function checkForWin() {
+    for (var x = 0; x < gridSize; x++) {
+        for (var y = 0; y < gridSize; y++) {
+            var cell = cells[x][y];
+            var check = checkCellsNeighbours(cell);
+            if (check) {
+                console.log("Someone scored! " + cell.state);
+            }
+        }
+    }
+}
+function checkCellsNeighbours(cell) {
+    if (cell.state == CellState.Empty) {
+        return false;
+    }
+    var up = checkCellsInDirection(0, 1, cell);
+    var upLeft = checkCellsInDirection(-1, 1, cell);
+    var upRight = checkCellsInDirection(1, 1, cell);
+    var upCheck = up || upLeft || upRight;
+    var left = checkCellsInDirection(-1, 0, cell);
+    var right = checkCellsInDirection(-1, 0, cell);
+    var sidewaysCheck = left || right;
+    var down = checkCellsInDirection(0, -1, cell);
+    var downLeft = checkCellsInDirection(-1, -1, cell);
+    var downRight = checkCellsInDirection(1, -1, cell);
+    var downCheck = down || downLeft || downRight;
+    return upCheck || sidewaysCheck || downCheck;
+}
+function checkCellsInDirection(dirX, dirY, cell) {
+    var countInLine = 0;
+    for (var i = 0; i < countInLineToWin; i++) {
+        var posX = cell.index.x + dirX * i;
+        var posY = cell.index.y + dirY * i;
+        if (posX >= gridSize) {
+            break;
+        }
+        if (posX < 0) {
+            break;
+        }
+        if (posY >= gridSize) {
+            break;
+        }
+        if (posY < 0) {
+            break;
+        }
+        var nextCell = cells[posX][posY];
+        if (nextCell.state != CellState.Empty) {
+            if (nextCell.state == cell.state) {
+                countInLine++;
+                continue;
+            }
+        }
+        countInLine = 0;
+    }
+    return countInLine >= countInLineToWin;
 }
 //==== MAIN LOOP ====
 requestAnimationFrame(gameLoop);
@@ -99,6 +162,7 @@ function drawCell(ctx, cell, cellWidth, cellHeight) {
             drawCross(ctx, posX, posY, cellWidth, cellHeight);
             break;
         case CellState.Circle:
+            drawCircle(ctx, posX, posY, cellWidth, cellHeight);
             break;
         case CellState.Empty:
             drawEmptyCell(ctx, posX, posY, cellWidth, cellHeight);
@@ -106,8 +170,12 @@ function drawCell(ctx, cell, cellWidth, cellHeight) {
     }
 }
 function drawCross(ctx, x, y, cellWidth, cellHeight) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x + cellWidth / 2 - 5, y + cellHeight / 2 - 5, 10, 10);
+    ctx.fillStyle = "red";
+    ctx.fillRect(x, y, cellWidth, cellHeight);
+}
+function drawCircle(ctx, x, y, cellWidth, cellHeight) {
+    ctx.fillStyle = "green";
+    ctx.fillRect(x, y, cellWidth, cellHeight);
 }
 function drawEmptyCell(ctx, x, y, cellWidth, cellHeight) {
     ctx.fillStyle = "white";

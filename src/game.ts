@@ -1,3 +1,5 @@
+export {}
+
 const gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement;
 const saveButton = document.getElementById("save-button") as HTMLButtonElement;
 const clearButton = document.getElementById("clear-button") as HTMLButtonElement;

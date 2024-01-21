@@ -2,13 +2,13 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [],
-  base: 'TTTO-CLient',
+  base: '/TTTO-Client',
   build: {
     outDir: 'dist',
     rollupOptions: {
       input: {
-        index: '/game.html',
-        game: '/index.html',
+        game: '/game.html',
+        index: '/index.html',
       },
     },
   },

@@ -1,10 +1,6 @@
-export {}
-
-const wsPort = 8080;
-const server_url = "localhost";
-const ws = new WebSocket(`ws://${server_url}:${wsPort}`);
-
 const gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement;
+const saveButton = document.getElementById("save-button") as HTMLButtonElement;
+const clearButton = document.getElementById("clear-button") as HTMLButtonElement;
 
 const gridSize = 20 as number;
 const gridSpacing = 2 as number;
@@ -24,9 +20,9 @@ class Vector2 {
 }
 
 enum CellState {
-    Empty = 0,
-    Cross = 1,
-    Circle = 2,
+    Empty = "Empty",
+    Cross = "Cross",
+    Circle = "Circle",
 }
 
 class Cell {
@@ -43,15 +39,12 @@ class Cell {
 //#endregion
 
 //==== INIT ====
+saveButton.addEventListener('click', saveGame);
+clearButton.addEventListener('click', clearBoard);
 gameCanvas.addEventListener("click", onCellClick);
+
 gameCanvas.addEventListener('contextmenu', (event) => event.preventDefault());
-ws.addEventListener("open", () => {
-    console.log("Connected!");
-    ws.send("Hello!");
-})
-ws.addEventListener('game-join', (msg) => {
-    console.log(msg);
-});
+
 setupGame();
 
 function setupGame() {
@@ -60,6 +53,39 @@ function setupGame() {
         for (let y = 0; y < gridSize; y++) {
             let pos = new Vector2(x, y);
             cellData[x][y] = new Cell(pos, CellState.Empty);
+        }
+    }
+    loadGame();
+}
+function saveGame(){
+    for (let x = 0; x < gridSize; x++) {
+        for (let y = 0; y < gridSize; y++) {
+           localStorage.setItem(`${x}:${y}`, cellData[x][y].state.toString())
+        }
+    }
+}
+function loadGame(){ 
+    for (let x = 0; x < gridSize; x++) {
+        for (let y = 0; y < gridSize; y++) {
+            var value = localStorage.getItem(`${x}:${y}`);
+            if(value != null){
+                let state : CellState | undefined = stringToEnum(CellState, value);
+
+                if(state != undefined){
+                    cellData[x][y].state = state;
+                }
+                
+            }    
+        }
+    } 
+}
+function stringToEnum<T>(enumObj: T, value: string): T[keyof T] | undefined {
+    return (enumObj as any)[value] as T[keyof T] | undefined;
+}
+function clearBoard(){
+    for (let x = 0; x < gridSize; x++) {
+        for (let y = 0; y < gridSize; y++) {
+            cellData[x][y].state = CellState.Empty;
         }
     }
 }

@@ -7,12 +7,12 @@ export default defineConfig({
     outDir: 'dist',
     rollupOptions: {
       input: {
-        app: '/src/pages/index.js',
+        index: '/game.html',
+        game: '/index.html',
       },
     },
   },
   server: {
     port: 3002,
-    open: '/src/pages/index.html',
   },
 });

@@ -1,8 +1,101 @@
+:root{
+    --main-menu-button-blue: #4B9CD3;
+    --main-menu-button-blue-hover:#ee7300;
+
+    --main-menu-button-blue-shade-top: #7CB9E8;
+    --main-menu-button-blue-shade-top-hover: #ff9900;
+    --main-menu-button-blue-shade-bottom: #2a52be;
+    --main-menu-button-blue-shade-bottom-hover: #b35000;
+}
+
 body{
     margin: 0;
     width: 100vw;
     height: 100vh;
+    font-family: 'Dosis', sans-serif;
+    color: white;
 }
+
+.main-menu{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    padding-top: 120px;
+    gap: 10px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.main-menu-title{
+    width: 500px;
+    height: fit-content;
+    font-size: 60px;
+    text-align: center;
+    -webkit-text-stroke: black 3px;
+}
+.main-menu-title h2{
+    margin: 0;
+}
+.main-menu-title h4{
+    margin: 0;
+}
+
+/* #region Main Menu Button Styling */
+.menu-button{
+    position: relative;
+    width: 100vh;
+    height: 80px;
+    padding: 0;
+    max-width: 350px;
+    background-color: var(--main-menu-button-blue);
+    color: white;
+    border-radius: 10px;
+    font-family: 'Dosis', sans-serif;
+    font-size: x-large;
+    cursor: pointer;
+    
+    border: black 4px solid;
+}
+.menu-button-shade-top{
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    top: 0px;
+    height: 10px;
+    transform: translate(-50%, 0);
+    border-radius: 5px 5px 0px 0px;
+    width: 100%;
+    
+    background-color: var(--main-menu-button-blue-shade-top);
+}
+.menu-button-shade-bottom{
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    bottom: 0px;
+    height: 10px;
+    transform: translate(-50%, 0);
+    border-radius: 0px 0px 5px 5px;
+    width: 100%;
+
+    background-color: var(--main-menu-button-blue-shade-bottom);
+    
+}
+
+.menu-button:hover{
+    background-color: var(--main-menu-button-blue-hover);
+}
+
+.menu-button:hover .menu-button-shade-top {
+     background-color: var(--main-menu-button-blue-shade-bottom-hover);
+}
+
+.menu-button:hover .menu-button-shade-bottom {
+    background-color: var(--main-menu-button-blue-shade-top-hover);
+}
+/* #endregion */
 
 .game-canvas{
     width: 500px;
@@ -12,33 +105,4 @@ body{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
-
-
-.tic-tac-toe-area{
-    width: 500px;
-    height: 500px;
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);   
-}
-.tic-tac-toe-grid{ 
-    display: grid;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-}
-.tic-tac-toe-element{
-    padding: 1px;
-    min-width: 0;
-    min-height: 0;
-}
-.tic-tac-toe-element button{
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    outline: none;
-    border: none;
 }

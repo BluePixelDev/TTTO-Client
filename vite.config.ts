@@ -1,18 +1,24 @@
-import { defineConfig } from 'vite';
+import path from "node:path";
+import process from "node:process";
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [],
   base: '/TTTO-Client',
+  root: "src/views",
+  publicDir: "public",
   build: {
     outDir: 'dist',
     rollupOptions: {
       input: {
-        game: '/game.html',
-        index: '/index.html',
+        index: '/views/index.html',
       },
     },
   },
   server: {
     port: 3002,
+    open: "index.html"
+  },
+  resolve: {
+    alias: { "/src": path.resolve(process.cwd(), "src") }
   },
 });

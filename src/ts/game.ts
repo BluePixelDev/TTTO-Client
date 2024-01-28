@@ -208,6 +208,7 @@ function checkForWin() {
 
             if (check) {
                 console.log("Someone scored! " + cell.state);
+                break;
             }
         }
     }

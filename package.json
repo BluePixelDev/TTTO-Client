@@ -5,12 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode staging",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@types/node": "^20.11.5",
     "typescript": "^5.2.2",
     "vite": "^5.0.12"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.4"
   }
 }

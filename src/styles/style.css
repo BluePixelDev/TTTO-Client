@@ -25,22 +25,28 @@ body {
 h1 {
     font-size: var(--h1-fs);
 }
+
 h2 {
     font-size: var(--h2-fs);
 }
+
 h3 {
     font-size: var(--h3-fs);
 }
+
 h4 {
     font-size: var(--h4-fs);
 }
+
 h5 {
     font-size: var(--h5-fs);
 }
+
 h6 {
     font-size: var(--h6-fs);
 }
-p { 
+
+p {
     font-size: var(--p-fs);
 }
 
@@ -55,7 +61,8 @@ button {
     font-size: larger;
     border-radius: 5px;
     cursor: pointer;
-    padding: 5px;
+    padding: 10px 30px;
+    box-sizing: border-box;
     box-shadow: inset 0px -4px rgba(0, 0, 0, 0.15);
 }
 
@@ -63,6 +70,7 @@ button:active {
     top: 2px;
     box-shadow: inset 0px 0px rgba(0, 0, 0, 0.15);
 }
+
 .default-button-style {
     position: relative;
     display: block;
@@ -74,9 +82,12 @@ button:active {
     font-size: larger;
     border-radius: 5px;
     cursor: pointer;
-    padding: 5px;
+    padding: 10px 30px;
+    box-sizing: border-box;
+    text-decoration: none;
     box-shadow: inset 0px -4px rgba(0, 0, 0, 0.15);
 }
+
 .default-button-style:active {
     top: 2px;
     box-shadow: inset 0px 0px rgba(0, 0, 0, 0.15);
@@ -84,7 +95,9 @@ button:active {
 
 
 /* === INPUT - TEXT === */
-input[type=text] {
+.input-text,
+.input-number {
+    appearance: textfield;
     border-radius: 5px;
     outline: none;
     text-align: center;
@@ -96,7 +109,8 @@ input[type=text] {
     max-width: max-content;
     width: 100%;
 }
-input[type=text]::placeholder{
+
+.input-text::placeholder {
     color: var(--primary-dark-color);
     text-align: center;
     font-size: large;
@@ -104,30 +118,14 @@ input[type=text]::placeholder{
 }
 
 /* === INPUT - NUMBER === */
-input[type=number] { 
-    border-radius: 5px;
-    outline: none;
-    text-align: center;
-    font-size: larger;
-    margin: 4px;
-    font-family: 'Dosis', sans-serif;
-    border: lightgray solid 2px;
-    color: var(--primary-dark-color);
-    max-width: max-content;
-    width: 100%;
-}
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type=number] {
-  -moz-appearance: textfield;
-  appearance: textfield;
+.input-number::-webkit-outer-spin-button,
+.input-number::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
 }
 
 /* === INPUT - RADIO === */
-input[type=radio] {
+.input-radio {
     align-items: center;
     justify-content: center;
     vertical-align: middle;
@@ -140,10 +138,12 @@ input[type=radio] {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
     transition: ease-in background-color 0.2s;
 }
-input[type=radio]:checked {
+
+.input-radio:checked {
     background-color: var(--primary-color);
 }
-input[type=radio]::after {
+
+.input-radio::after {
     display: block;
     content: '';
     width: 50%;
@@ -151,7 +151,8 @@ input[type=radio]::after {
     transform: scale(0);
     transition: ease transform 0.15s;
 }
-input[type=radio]:checked::after {
+
+.input-radio:checked::after {
     display: block;
     content: '';
     margin: auto;
@@ -162,7 +163,7 @@ input[type=radio]:checked::after {
 }
 
 /* === INPUT - CHECKBOX === */
-input[type=checkbox] {
+.input-checkbox {
     display: inline-flex;
     justify-content: center;
     vertical-align: middle;
@@ -175,10 +176,12 @@ input[type=checkbox] {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
     transition: background-color ease 0.2s;
 }
-input[type=checkbox]:checked {
+
+.input-checkbox:checked {
     background-color: var(--primary-color);
 }
-input[type=checkbox]::after {
+
+.input-checkbox::after {
     display: block;
     content: '';
     transform: translateX(0);
@@ -190,11 +193,13 @@ input[type=checkbox]::after {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
     transition: margin ease 0.15s, transform ease 0.15s;
 }
-input[type=checkbox]:checked::after {
+
+.input-checkbox:checked::after {
     background-color: white;
     margin-left: 100%;
     transform: translateX(calc(-50% - 3px));
 }
+
 label {
     user-select: none;
     font-family: 'Dosis', sans-serif;
@@ -206,13 +211,14 @@ label {
     width: 100vw;
     height: 100vh;
 }
+
 .site-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); 
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .gradient-background {
@@ -224,26 +230,28 @@ label {
     padding: 30px;
     border-radius: 10px;
     background-color: white;
-    color: black;
+    color: var(--primary-dark-color);
 }
 
-.center-absolute{
+.center-absolute {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
 }
-.center-absolute-horizontal{
+
+.center-absolute-horizontal {
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
 }
 
 /* ==== SIZES ====*/
-.width-100{
+.width-100 {
     width: 100%;
 }
-.height-100{
+
+.height-100 {
     height: 100%;
 }
 
@@ -251,12 +259,15 @@ label {
 .flex {
     display: flex;
 }
+
 .flex-column {
     flex-direction: column;
 }
+
 .flex-vertical-center {
     align-items: center;
 }
+
 .flex-center {
     align-items: center;
     justify-content: center;
@@ -264,24 +275,26 @@ label {
 
 
 /*==== ANIMATIONS ====*/
-.fly-in-animation{
+.fly-in-animation {
     animation: ease-out fly-in-animation 0.5s;
 }
+
 .spin-animation {
     animation: cubic-bezier(0.34, 1.56, 0.64, 1) spin-animation 10s infinite;
 }
 
-/* ==== DIALOG ==== */
+/* ==== POPUP ==== */
 .dialog-name-input {
     position: absolute;
     gap: 10px;
     padding: 20px;
     text-align: center;
-    
 }
+
 .dialog-name-input input {
     height: 30px;
 }
+
 .dialog-name-input button {
     width: 100%;
     height: 50px;
@@ -332,7 +345,7 @@ label {
     color: lightgray;
 }
 
-.menu-input[type='text'] {
+.menu-input {
     max-width: 100%;
     width: 100%;
     height: 50px;
@@ -350,7 +363,7 @@ label {
 /* #endregion */
 
 /* #region LOBBY*/
-.lobby-header { 
+.lobby-header {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -359,14 +372,16 @@ label {
     height: 100px;
     color: var(--primary-dark-color);
 }
+
 .game-code-dialog {
     display: flex;
     align-items: center;
     vertical-align: middle;
     gap: 20px;
 }
+
 .game-code-dialog h1 {
-    margin: 0; 
+    margin: 0;
 }
 
 .lobby-players {
@@ -377,9 +392,11 @@ label {
     max-width: 350px;
     width: 100%;
 }
+
 .lobby-players h1 {
     text-align: center;
 }
+
 .lobby-player {
     display: flex;
     flex-direction: column;
@@ -389,6 +406,7 @@ label {
     height: 50px;
     border-radius: 15px;
 }
+
 .lobby-player h2 {
     text-align: center;
 }
@@ -399,6 +417,7 @@ label {
     margin-right: auto;
     margin-left: auto;
 }
+
 /* #endregion */
 
 .game-canvas {
@@ -410,9 +429,11 @@ label {
     0% {
         transform: rotate(0deg);
     }
+
     75% {
         transform: rotate(360deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -423,6 +444,7 @@ label {
         top: calc(50% - 20px);
         opacity: 0;
     }
+
     to {
         top: 50%;
         opacity: 1;

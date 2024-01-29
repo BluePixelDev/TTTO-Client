@@ -1,12 +1,13 @@
+const siteWrapper = document.getElementById('gradient-background') as HTMLDivElement;
+
+//Name Input - Dialog
 const namePopup = document.getElementById('name-popup') as HTMLDivElement;
 const nameInput = document.getElementById('name-input') as HTMLInputElement;
 const nameInputButton = document.getElementById('name-input-button') as HTMLInputElement;
 
-const siteWrapper = document.getElementById('gradient-background') as HTMLDivElement;
+//Join
 const joinInput = document.getElementById('join-input') as HTMLInputElement;
 const joinButton = document.getElementById("join-button") as HTMLButtonElement;
-
-const hostButton = document.getElementById("host-button") as HTMLButtonElement;
 
 let colPos0 = 0;
 let colPos1 = 20;
@@ -18,14 +19,15 @@ nameInputButton.addEventListener('click', () => {
         sessionStorage.setItem('username', nameInput.value);
     }
     else{
-        joinInput.style.borderColor = 'red';
+        nameInput.style.borderColor = 'red';
     }
 });
 
+//==== JOINING ====
 joinButton.addEventListener('click', () => {
     if(joinInput.value != ""){
         sessionStorage.setItem('join-code', joinInput.value);
-        window.location.replace(`${import.meta.env.BASE_URL}/lobby`)
+        window.location.replace(`${import.meta.env.BASE_URL}/play/join`)
         sessionStorage.setItem('isHosting',"false");
     }
     else{
@@ -33,11 +35,7 @@ joinButton.addEventListener('click', () => {
     }
 })
 
-hostButton.addEventListener('click', () => {
-    sessionStorage.setItem('isHosting',"true");
-})
-
-
+//==== BACKGROUND ANIMATION ====
 requestAnimationFrame(animation);
 function animation(){
     if(siteWrapper != null){

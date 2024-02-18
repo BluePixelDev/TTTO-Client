@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" href="/favicon.png">
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+
+  <!-- MAIN MENU -->
+  <div class="wrapper gradient-bg" id="menu-wrapper">
+    <div class="main-menu center-absolute">
+      <div class="main-menu-title">
+        <h1>TIC TAC TOE</h1>
+        <h2>ONLINE</h2>
+      </div>
+
+      <div class="box width-100 menu-button-wrapper">
+
+        <input class="input-number menu-input" placeholder="USERNAME" type="text" autocomplete="on" id="name-input">
+        <button class="menu-button flex flex-center" id="join-button">
+          Join
+        </button>
+
+        <button class="default-button-style menu-button flex flex-center" id="host-button">
+          Host
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- POPUP -->
+  <div class="overlay" id="host-popup">
+    <div class="box flex flex-column flex-center center-absolute fly-in-animation dialog-name-input">
+      <input class="input-number menu-input" placeholder="GAME CODE" type="text" autocomplete="off"
+        id="code-popup-input" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+      <button id="code-popup-submit-button">Submit</button>
+      <button id="code-popup-cancel-button" class="button-cancel">Cancel</button>
+    </div>
+  </div>
+
+  <script type="module" src="/index.ts"></script>
+
+</body>
+
+</html>

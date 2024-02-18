@@ -61,7 +61,7 @@ button {
     font-size: larger;
     border-radius: 5px;
     cursor: pointer;
-    padding: 10px 30px;
+    padding: 10px 20px;
     box-sizing: border-box;
     box-shadow: inset 0px -4px rgba(0, 0, 0, 0.15);
 }
@@ -69,6 +69,10 @@ button {
 button:active {
     top: 2px;
     box-shadow: inset 0px 0px rgba(0, 0, 0, 0.15);
+}
+
+.text-center{
+    text-align: center;
 }
 
 .default-button-style {
@@ -93,6 +97,9 @@ button:active {
     box-shadow: inset 0px 0px rgba(0, 0, 0, 0.15);
 }
 
+.button-cancel {
+    background-color: #D21F3C;
+}
 
 /* === INPUT - TEXT === */
 .input-text,
@@ -162,6 +169,10 @@ button:active {
     transform: scale(1);
 }
 
+.input-range {
+    vertical-align: middle;
+}
+
 /* === INPUT - CHECKBOX === */
 .input-checkbox {
     display: inline-flex;
@@ -207,12 +218,12 @@ label {
     color: var(--primary-dark-color);
 }
 
-.site-wrapper {
+.wrapper {
     width: 100vw;
     height: 100vh;
 }
 
-.site-overlay {
+.overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -221,7 +232,7 @@ label {
     background-color: rgba(0, 0, 0, 0.4);
 }
 
-.gradient-background {
+.gradient-bg {
     background: linear-gradient(hsl(10deg 50% 50%), hsl(20deg 50% 50%))
 }
 
@@ -364,13 +375,18 @@ label {
 
 /* #region LOBBY*/
 .lobby-header {
+    position: relative;
     display: flex;
-    justify-content: center;
-    align-items: center;
     background-color: white;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
     height: 100px;
     color: var(--primary-dark-color);
+}
+
+.lobby-header button {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 10px;
 }
 
 .game-code-dialog {
@@ -418,6 +434,30 @@ label {
     margin-left: auto;
 }
 
+/* #endregion */
+
+/* #region Host*/
+.box-host {
+    max-width: 350px;
+    width: 100vw;
+}
+.input-field {
+    display: flex;
+}
+.input-field input {
+    display: flex;
+    flex-grow: 1;
+    vertical-align: middle;
+}
+.input-field label {
+    vertical-align: middle;
+    width: 20px;
+    text-align: center;
+    font-size: large;
+}
+.input-field {
+    margin-bottom: 20px;
+}
 /* #endregion */
 
 .game-canvas {

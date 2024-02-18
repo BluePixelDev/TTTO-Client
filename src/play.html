@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" href="/favicon.png">
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+
+  <div class="wrapper gradient-bg" id="game-wrapper">
+    <!--- GAME -->
+    <canvas width="100" height="200" class="center-absolute game-canvas" id="game-canvas">
+    </canvas>
+  </div>
+
+  <!--- LOBBY -->
+  <div class="wrapper gradient-bg" id="lobby-wrapper">
+    <div class="lobby-header">
+      <button class="button-cancel" id="lobby-leave-button">
+        Leave
+      </button>
+
+      <div class="game-code-dialog center-absolute">
+        <h1 id="game-code">
+          Game Code:
+        </h1>
+      </div>
+
+    </div>
+    <div class="lobby-players center-absolute-horizontal">
+      <h1>-- Players --</h1>
+      <div id="lobby-players-container">
+
+      </div>
+      <button class="match-start-button" id="match-begin-button">
+        BEGIN MATCH
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="/play.ts"></script>
+
+</body>
+
+</html>

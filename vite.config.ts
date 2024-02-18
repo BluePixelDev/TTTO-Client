@@ -4,21 +4,25 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   base: '/TTTO-Client',
-  root: "src/views",
   publicDir: "public",
+  root: 'src',
   build: {
-    outDir: 'dist',
+    outDir: '../dist',
+    emptyOutDir: true,
     rollupOptions: {
       input: {
-        index: '/views/index.html',
+        index: 'src/index.html',
+        host: 'src/play/host.html',
+        join: 'src/play/join.html',
+        game: 'src/play/game.html',
       },
     },
   },
   server: {
     port: 3002,
-    open: "index.html"
+    open: "%BASE_URL%/index.html"
   },
   resolve: {
-    alias: { "/src": path.resolve(process.cwd(), "src") }
+    alias: {"/src": path.resolve(process.cwd(), "src")}
   },
 });

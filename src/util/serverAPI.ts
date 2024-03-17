@@ -4,7 +4,7 @@ export default class ServerAPI {
      * Calls *create* API on the server and returns id of the new lobby. 
      */
     static async createLobby(size: number, data: Record<string, any>): Promise<Response> {
-        return await this.postAPI('create', { lobbySize: size, data});
+        return await this.postAPI('create-lobby', { lobbySize: size, data});
     }
 
     /**
@@ -27,7 +27,7 @@ export default class ServerAPI {
      * @returns Join code associated with target lobby.
      */
     static async getLobbyJoinCode(lobbyId: string): Promise<Response> {
-        return await this.callAPI(`getJoinCode/${lobbyId}`);
+        return await this.callAPI(`lobby/code/${lobbyId}`);
     }
 
     private static async callAPI(path: string): Promise<Response> {

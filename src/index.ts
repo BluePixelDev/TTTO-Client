@@ -12,7 +12,7 @@ const codePopupCancelButton = document.getElementById('code-popup-cancel-button'
 const codePopupInput = document.getElementById('code-popup-input') as HTMLInputElement
 
 let username = "";
-let lobbyId = "";
+let lobbyID = "";
 let joinCode = -1;
 
 joinPopup.style.display = 'none';
@@ -42,13 +42,12 @@ async function joinLobby() {
         const data = await res.json();
         console.log(data);
         if (data.success) {
-            lobbyId = data.lobbyId;           
-            sessionStorage.setItem("lobbyId", lobbyId);
+            lobbyID = data.lobbyId;           
+            sessionStorage.setItem("lobbyID", lobbyID);
             document.location = import.meta.env.BASE_URL + "/play.html";
         }
         else {
             console.log("Error, Lobby does not exists!");
-            //Handle error here.
         }
     })
 }

@@ -284,6 +284,9 @@ label {
     justify-content: center;
 }
 
+.margin-none{
+    margin: 0;
+}
 
 /*==== ANIMATIONS ====*/
 .fly-in-animation {

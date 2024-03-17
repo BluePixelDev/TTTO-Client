@@ -5,9 +5,11 @@ import { Ease, Sequence, Tweener } from './util/tweener/tweening.ts';
 import crossImageURL from '../public/cross.svg'
 import circleImageURL from '../public/circle.svg'
 import { FillRectRenderer, SpriteRenderer } from './game/rendering/renderer.ts';
+import ServerSocket from './util/serverSocket.ts';
 
 export default class Game {
     gameCanvas: HTMLCanvasElement;
+    serverSocket: ServerSocket
 
     //==== ASSETS ====
     crossImage: HTMLImageElement = new Image();
@@ -15,14 +17,16 @@ export default class Game {
 
     boardSize = 3 as number;
     gridSpacing = 2 as number;
-    countInRowToWin = 4 as number;
+    inRowToWin = 4 as number;
 
-    cellData = [] as Cell[][];
+    cells = [] as Cell[][];
     lastState = 0;
 
-    constructor(boardSize: number, canvas: HTMLCanvasElement) {
-        this.boardSize = boardSize;
+    constructor(canvas: HTMLCanvasElement, serverSocket: ServerSocket, boardSize: number, inRowToWin: number) {
         this.gameCanvas = canvas;
+        this.serverSocket = serverSocket;
+        this.boardSize = boardSize;
+        this.inRowToWin = inRowToWin;
         this.crossImage.src = crossImageURL;
         this.circleImage.src = circleImageURL;
 
@@ -30,11 +34,12 @@ export default class Game {
         this.gameCanvas.addEventListener("click", this.onCellClick.bind(this));
         this.gameCanvas.addEventListener('contextmenu', (event) => event.preventDefault());
         this.setupGame();
+        this.setupSocket();
     }
 
     setupGame() {
         for (let x = 0; x < this.boardSize; x++) {
-            this.cellData[x] = [];
+            this.cells[x] = [];
             for (let y = 0; y < this.boardSize; y++) {
                 const pos = new Vector2(x, y); //Index position of the cell
                 const cell = new Cell(pos, CellState.Empty); //The cell itself
@@ -51,7 +56,7 @@ export default class Game {
                 contentRenderer.transform.parent = cell.cellRenderer.transform;
 
                 //Assigning cell to the array
-                this.cellData[x][y] = cell;
+                this.cells[x][y] = cell;
 
                 //Animating in transistion
                 setTimeout(() => {
@@ -66,59 +71,6 @@ export default class Game {
         }
     }
 
-    render() {
-        const ctx = this.gameCanvas.getContext('2d');
-
-        const size = 500;
-        this.gameCanvas.style.width = `${size}px`;
-        this.gameCanvas.style.height = `${size}px`;
-
-        const scale = window.devicePixelRatio;
-        this.gameCanvas.width = Math.floor(size * scale);
-        this.gameCanvas.height = Math.floor(size * scale);
-
-        if (ctx == null) return;
-
-        // Normalize coordinate system to use CSS pixels.
-        ctx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
-        this.drawCells(ctx);
-    }
-
-    drawCells(ctx: CanvasRenderingContext2D) {
-        let cellWidth = (this.gameCanvas.width - (this.boardSize + 1) * this.gridSpacing) / this.boardSize;
-        let cellHeight = (this.gameCanvas.height - (this.boardSize + 1) * this.gridSpacing) / this.boardSize;
-
-        for (let x = 0; x < this.boardSize; x++) {
-            for (let y = 0; y < this.boardSize; y++) {
-                let posX = (cellWidth + this.gridSpacing) * (x + 0.5) + this.gridSpacing;
-                let posY = (cellHeight + this.gridSpacing) * (y + 0.5) + this.gridSpacing;
-
-                const cell = this.cellData[x][y];
-
-                if (cell.cellRenderer) {
-                    const transform = cell.cellRenderer.transform;
-                    transform.position = new Vector2(posX, posY);
-                    transform.size = new Vector2(cellWidth, cellHeight);
-                    cell.cellRenderer.render(ctx);
-                }
-                if (cell.contentRenderer) {
-                    const transform = cell.contentRenderer.transform;
-                    transform.size = new Vector2(cellWidth - 10, cellHeight - 10);
-
-                    switch (cell.state) {
-                        case CellState.Cross:
-                            cell.contentRenderer.render(ctx);
-                            break;
-
-                        case CellState.Circle:
-                            cell.contentRenderer.render(ctx);
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
     //==== EVENTS ====
     onCellClick(event: MouseEvent) {
         const rect = this.gameCanvas.getBoundingClientRect();
@@ -128,13 +80,11 @@ export default class Game {
         const x = (event.clientX - rect.left) * xScale;
         const y = (event.clientY - rect.top) * yScale;
         this.clickOnCell(x, y);
-        this.checkForWin();
     }
     clickOnCell(posX: number, posY: number) {
         const cellSize = this.gameCanvas.width / this.boardSize;
         const xIndex = Math.floor(posX / cellSize);
         const yIndex = Math.floor(posY / cellSize);
-        const cell = this.cellData[xIndex][yIndex];
 
         const keys = Object.values(CellState).filter((x) => typeof x === 'number');
 
@@ -144,10 +94,11 @@ export default class Game {
         if (this.lastState === 0) {
             this.lastState = 1;
         }
-
-        this.changeCellState(cell, this.lastState);
+        this.serverSocket.socket.emit('set-cell', { cellX: xIndex, cellY: yIndex })
     }
     changeCellState(cell: Cell, cellState: CellState) {
+        if(cell.state == cellState) return;
+        
         if (cell.contentRenderer) {
             const transform = cell.contentRenderer.transform;
             const seq = new Sequence();
@@ -180,76 +131,95 @@ export default class Game {
         }
     }
 
-    checkForWin(): Cell[] | null {
-        let winnigCells: Cell[] = [];
+    setupSocket() {
+        this.serverSocket.socket.on('set-cell', (res) => {
+            console.log(res);
+        });
+        this.serverSocket.socket.on('on-board-update', (res) => {
+            let x = 0;
+            let y = 0;
+
+            res.forEach((cells: any) => {
+                cells.forEach((cell: any) => {
+                    const targetCell = this.cells[x][y];
+                    const state = this.jsonToEnum(cell.state);
+
+                    if (state) {
+                        this.changeCellState(targetCell, state);
+                    }
+
+                    y++;
+                })
+                y = 0;
+                x++;
+            })
+        })
+    }
+    private jsonToEnum(jsonData: any): CellState | null {
+        // Define a mapping between JSON strings and enum values
+        const enumMapping: { [key: string]: CellState } = {
+            "Empty": CellState.Empty,
+            "Cross": CellState.Cross,
+            "Circle": CellState.Circle
+        };
+        // Check if the JSON data is a valid key in the mapping
+        if (jsonData in enumMapping) {
+            return enumMapping[jsonData]; // Return the corresponding enum value
+        } else {
+            return null; // Return null if no matching enum value is found
+        }
+    }
+
+    render() {
+        const ctx = this.gameCanvas.getContext('2d');
+
+        const size = 500;
+        this.gameCanvas.style.width = `${size}px`;
+        this.gameCanvas.style.height = `${size}px`;
+
+        const scale = window.devicePixelRatio;
+        this.gameCanvas.width = Math.floor(size * scale);
+        this.gameCanvas.height = Math.floor(size * scale);
+
+        if (ctx == null) return;
+
+        // Normalize coordinate system to use CSS pixels.
+        ctx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+        this.drawCells(ctx);
+    }
+
+    private drawCells(ctx: CanvasRenderingContext2D) {
+        let cellWidth = (this.gameCanvas.width - (this.boardSize + 1) * this.gridSpacing) / this.boardSize;
+        let cellHeight = (this.gameCanvas.height - (this.boardSize + 1) * this.gridSpacing) / this.boardSize;
+
         for (let x = 0; x < this.boardSize; x++) {
             for (let y = 0; y < this.boardSize; y++) {
+                let posX = (cellWidth + this.gridSpacing) * (x + 0.5) + this.gridSpacing;
+                let posY = (cellHeight + this.gridSpacing) * (y + 0.5) + this.gridSpacing;
 
-                const cell = this.cellData[x][y];
-                let check = this.checkCellNeighbours(cell, (winningCells) => {
-                    winningCells.forEach(element => {
-                        (element.cellRenderer as FillRectRenderer).fillStyle = "orange"
-                    });
-                });
+                const cell = this.cells[x][y];
 
-                if (check) {
-                    console.log("Someone scored! " + cell.state);
-                    break;
+                if (cell.cellRenderer) {
+                    const transform = cell.cellRenderer.transform;
+                    transform.position = new Vector2(posX, posY);
+                    transform.size = new Vector2(cellWidth, cellHeight);
+                    cell.cellRenderer.render(ctx);
+                }
+                if (cell.contentRenderer) {
+                    const transform = cell.contentRenderer.transform;
+                    transform.size = new Vector2(cellWidth - 10, cellHeight - 10);
+
+                    switch (cell.state) {
+                        case CellState.Cross:
+                            cell.contentRenderer.render(ctx);
+                            break;
+
+                        case CellState.Circle:
+                            cell.contentRenderer.render(ctx);
+                            break;
+                    }
                 }
             }
         }
-        return winnigCells;
-    }
-    checkCellNeighbours(cell: Cell, out: (winningCells: Cell[]) => void): Boolean {
-
-        if (cell.state == CellState.Empty) {
-            return false
-        }
-
-        let winningCells: Cell[] = [];
-        for (let x = -1; x < 2; x++) {
-            for (let y = -1; y < 2; y++) {
-                if (x == 0 && y == 0) continue;
-
-                const cells = this.checkCellsInDirection(x, y, cell);
-                if (cells.length >= this.countInRowToWin) {
-                    winningCells = winningCells.concat(cells);
-                }
-            }
-        }
-
-        out(winningCells);
-        return winningCells.length > 0;
-    }
-    checkCellsInDirection(dirX: number, dirY: number, cell: Cell): Cell[] {
-        let cellsInRow: Cell[] = [];
-        for (let i = 0; i < this.boardSize; i++) {
-            let nextPosX = cell.index.x + dirX * i;
-            let nextPosY = cell.index.y + dirY * i;
-
-            if (nextPosX >= this.boardSize) {
-                break;
-            }
-            if (nextPosX < 0) {
-                break;
-            }
-
-            if (nextPosY >= this.boardSize) {
-                break;
-            }
-            if (nextPosY < 0) {
-                break;
-            }
-
-            let nextCell = this.cellData[nextPosX][nextPosY];
-            if (nextCell.state != CellState.Empty) {
-                if (nextCell.state == cell.state) {
-                    cellsInRow.push(nextCell);
-                    continue;
-                }
-            }
-            break;
-        }
-        return cellsInRow;
     }
 }

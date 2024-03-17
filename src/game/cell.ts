@@ -2,9 +2,9 @@ import { Renderer } from "./rendering/renderer";
 import { Vector2 } from "./rendering/vector2";
 
 export enum CellState {
-    Empty = 0,
-    Cross = 1,
-    Circle = 2,
+    Empty,
+    Cross,
+    Circle,
 }
 
 export class Cell {
